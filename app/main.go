@@ -2,9 +2,11 @@ package main
 
 import (
 	"fmt"
+	"log/syslog"
 	"os"
 
 	"github.com/sirupsen/logrus"
+	lSyslog "github.com/sirupsen/logrus/hooks/syslog"
 	"github.com/sotah-inc/steamwheedle-cartel-server/app/commands"
 	"github.com/sotah-inc/steamwheedle-cartel/pkg/command"
 	"github.com/sotah-inc/steamwheedle-cartel/pkg/logging"
@@ -36,6 +38,7 @@ func main() {
 		verbosity      = app.Flag("verbosity", "Log verbosity").Default("info").Short('v').String()
 		cacheDir       = app.Flag("cache-dir", "Directory to cache data files to").Required().String()
 		projectID      = app.Flag("project-id", "GCloud Storage Project ID").Default("").Envar("PROJECT_ID").String()
+		syslogHost     = app.Flag("syslog-host", "syslog hostname").Required().Envar("SYSLOG_HOST").Short('s').String()
 
 		apiCommand                = app.Command(string(commands.API), "For running sotah-server.")
 		liveAuctionsCommand       = app.Command(string(commands.LiveAuctions), "For in-memory storage of current auctions.")
@@ -64,6 +67,15 @@ func main() {
 		return
 	}
 	logging.SetLevel(logVerbosity)
+
+	// adding syslog hook
+	syslogHook, err := lSyslog.NewSyslogHook("udp", fmt.Sprintf("%s:6514", *syslogHost), syslog.LOG_INFO, "")
+	if err != nil {
+		logging.WithField("error", err.Error()).Fatal("Could not add syslog logrus hook")
+
+		return
+	}
+	logging.AddHook(syslogHook)
 
 	// loading the config file
 	c, err := sotah.NewConfigFromFilepath(*configFilepath)
