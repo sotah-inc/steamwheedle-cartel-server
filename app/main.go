@@ -69,6 +69,7 @@ func main() {
 	logging.SetLevel(logVerbosity)
 
 	// adding syslog hook
+	logging.WithField("syslog-host", *syslogHost).Info("Adding syslog hook")
 	syslogHook, err := lSyslog.NewSyslogHook("udp", fmt.Sprintf("%s:6514", *syslogHost), syslog.LOG_INFO, "")
 	if err != nil {
 		logging.WithField("error", err.Error()).Fatal("Could not add syslog logrus hook")
