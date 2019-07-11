@@ -3,9 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
-	"time"
 
-	"github.com/Abramovic/logrus_influxdb"
 	"github.com/sirupsen/logrus"
 	"github.com/sotah-inc/steamwheedle-cartel-server/app/commands"
 	"github.com/sotah-inc/steamwheedle-cartel/pkg/command"
@@ -38,7 +36,6 @@ func main() {
 		verbosity      = app.Flag("verbosity", "Log verbosity").Default("info").Short('v').String()
 		cacheDir       = app.Flag("cache-dir", "Directory to cache data files to").Required().String()
 		projectID      = app.Flag("project-id", "GCloud Storage Project ID").Default("").Envar("PROJECT_ID").String()
-		influxdbHost   = app.Flag("influxdb-host", "influxdb hostname").Required().Envar("INFLUX_HOST").String()
 
 		apiCommand                = app.Command(string(commands.API), "For running sotah-server.")
 		liveAuctionsCommand       = app.Command(string(commands.LiveAuctions), "For in-memory storage of current auctions.")
@@ -67,24 +64,6 @@ func main() {
 		return
 	}
 	logging.SetLevel(logVerbosity)
-
-	// adding influxdb hook
-	logging.WithField("influxdb-host", *influxdbHost).Info("Creating influxdb hook")
-	influxdbHook, err := logrus_influxdb.NewInfluxDB(&logrus_influxdb.Config{
-		Host:          *influxdbHost,
-		Port:          8086,
-		Database:      "logrus",
-		UseHTTPS:      false,
-		Precision:     "ns",
-		BatchInterval: 5 * time.Second,
-		BatchCount:    200,
-	})
-	if err != nil {
-		logging.WithField("error", err.Error()).Fatal("Could not create influxdb logrus hook")
-
-		return
-	}
-	logging.AddHook(influxdbHook)
 
 	// loading the config file
 	c, err := sotah.NewConfigFromFilepath(*configFilepath)

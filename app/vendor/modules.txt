@@ -18,8 +18,6 @@ cloud.google.com/go/pubsub/internal/distribution
 cloud.google.com/go/firestore/apiv1
 cloud.google.com/go/internal/btree
 cloud.google.com/go/internal/fields
-# github.com/Abramovic/logrus_influxdb v0.0.0-20190327191450-8f4523eb7e78
-github.com/Abramovic/logrus_influxdb
 # github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc
 github.com/alecthomas/template
 github.com/alecthomas/template/parse
@@ -39,10 +37,6 @@ github.com/golang/protobuf/ptypes/wrappers
 github.com/golang/protobuf/protoc-gen-go/descriptor
 # github.com/googleapis/gax-go/v2 v2.0.3
 github.com/googleapis/gax-go/v2
-# github.com/influxdata/influxdb1-client v0.0.0-20190402204710-8ff2fc3824fc
-github.com/influxdata/influxdb1-client/v2
-github.com/influxdata/influxdb1-client/models
-github.com/influxdata/influxdb1-client/pkg/escape
 # github.com/konsorten/go-windows-terminal-sequences v1.0.1
 github.com/konsorten/go-windows-terminal-sequences
 # github.com/lithammer/fuzzysearch v1.0.2
@@ -57,7 +51,7 @@ github.com/nats-io/nkeys
 github.com/nats-io/nuid
 # github.com/sirupsen/logrus v1.4.2
 github.com/sirupsen/logrus
-# github.com/sotah-inc/steamwheedle-cartel v0.0.0-20190711201255-2e90bf8913a0
+# github.com/sotah-inc/steamwheedle-cartel v0.0.0-20190711203234-7351d53e1026
 github.com/sotah-inc/steamwheedle-cartel/pkg/command
 github.com/sotah-inc/steamwheedle-cartel/pkg/logging
 github.com/sotah-inc/steamwheedle-cartel/pkg/logging/stackdriver
