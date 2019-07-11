@@ -69,6 +69,7 @@ func main() {
 	logging.SetLevel(logVerbosity)
 
 	// adding influxdb hook
+	logging.WithField("influxdb-host", *influxdbHost).Info("Creating influxdb hook")
 	influxdbHook, err := logrus_influxdb.NewInfluxDB(&logrus_influxdb.Config{
 		Host:          *influxdbHost,
 		Port:          8086,
@@ -98,6 +99,7 @@ func main() {
 
 	// optionally adding stackdriver hook
 	if c.UseGCloud {
+		logging.WithField("project-id", *projectID).Info("Creating stackdriver hook")
 		stackdriverHook, err := stackdriver.NewHook(*projectID, cmd)
 		if err != nil {
 			logging.WithFields(logrus.Fields{
