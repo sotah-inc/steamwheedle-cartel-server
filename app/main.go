@@ -6,12 +6,15 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"github.com/sotah-inc/steamwheedle-cartel-server/app/commands"
-	"github.com/sotah-inc/steamwheedle-cartel/pkg/command"
+	devCommand "github.com/sotah-inc/steamwheedle-cartel/pkg/command/dev"
+	fnCommand "github.com/sotah-inc/steamwheedle-cartel/pkg/command/fn"
+	prodCommand "github.com/sotah-inc/steamwheedle-cartel/pkg/command/prod"
 	"github.com/sotah-inc/steamwheedle-cartel/pkg/logging"
 	"github.com/sotah-inc/steamwheedle-cartel/pkg/logging/stackdriver"
 	"github.com/sotah-inc/steamwheedle-cartel/pkg/sotah"
-	"github.com/sotah-inc/steamwheedle-cartel/pkg/state"
-	"github.com/sotah-inc/steamwheedle-cartel/pkg/state/fn"
+	devState "github.com/sotah-inc/steamwheedle-cartel/pkg/state/dev"
+	fnState "github.com/sotah-inc/steamwheedle-cartel/pkg/state/fn"
+	prodState "github.com/sotah-inc/steamwheedle-cartel/pkg/state/prod"
 	"github.com/twinj/uuid"
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 )
@@ -98,7 +101,7 @@ func main() {
 	// declaring a command map
 	cMap := commandMap{
 		apiCommand.FullCommand(): func() error {
-			return command.Api(state.APIStateConfig{
+			return devCommand.Api(devState.APIStateConfig{
 				SotahConfig:          c,
 				DiskStoreCacheDir:    *cacheDir,
 				ItemsDatabaseDir:     fmt.Sprintf("%s/databases", *cacheDir),
@@ -110,7 +113,7 @@ func main() {
 			})
 		},
 		liveAuctionsCommand.FullCommand(): func() error {
-			return command.LiveAuctions(state.LiveAuctionsStateConfig{
+			return devCommand.LiveAuctions(devState.LiveAuctionsStateConfig{
 				MessengerHost:           *natsHost,
 				MessengerPort:           *natsPort,
 				DiskStoreCacheDir:       *cacheDir,
@@ -118,7 +121,7 @@ func main() {
 			})
 		},
 		pricelistHistoriesCommand.FullCommand(): func() error {
-			return command.PricelistHistories(state.PricelistHistoriesStateConfig{
+			return devCommand.PricelistHistories(devState.PricelistHistoriesStateConfig{
 				DiskStoreCacheDir:             *cacheDir,
 				MessengerPort:                 *natsPort,
 				MessengerHost:                 *natsHost,
@@ -126,7 +129,7 @@ func main() {
 			})
 		},
 		prodApiCommand.FullCommand(): func() error {
-			return command.ProdApi(state.ProdApiStateConfig{
+			return prodCommand.ProdApi(prodState.ProdApiStateConfig{
 				SotahConfig:     c,
 				MessengerPort:   *natsPort,
 				MessengerHost:   *natsHost,
@@ -134,14 +137,14 @@ func main() {
 			})
 		},
 		prodMetricsCommand.FullCommand(): func() error {
-			return command.ProdMetrics(state.ProdMetricsStateConfig{
+			return prodCommand.ProdMetrics(prodState.ProdMetricsStateConfig{
 				MessengerPort:   *natsPort,
 				MessengerHost:   *natsHost,
 				GCloudProjectID: *projectID,
 			})
 		},
 		prodLiveAuctionsCommand.FullCommand(): func() error {
-			return command.ProdLiveAuctions(state.ProdLiveAuctionsStateConfig{
+			return prodCommand.ProdLiveAuctions(prodState.ProdLiveAuctionsStateConfig{
 				MessengerPort:           *natsPort,
 				MessengerHost:           *natsHost,
 				GCloudProjectID:         *projectID,
@@ -149,7 +152,7 @@ func main() {
 			})
 		},
 		prodPricelistHistoriesCommand.FullCommand(): func() error {
-			return command.ProdPricelistHistories(state.ProdPricelistHistoriesStateConfig{
+			return prodCommand.ProdPricelistHistories(prodState.ProdPricelistHistoriesStateConfig{
 				MessengerPort:                 *natsPort,
 				MessengerHost:                 *natsHost,
 				GCloudProjectID:               *projectID,
@@ -157,7 +160,7 @@ func main() {
 			})
 		},
 		prodItemsCommand.FullCommand(): func() error {
-			return command.ProdItems(state.ProdItemsStateConfig{
+			return prodCommand.ProdItems(prodState.ProdItemsStateConfig{
 				MessengerPort:    *natsPort,
 				MessengerHost:    *natsHost,
 				GCloudProjectID:  *projectID,
@@ -165,34 +168,34 @@ func main() {
 			})
 		},
 		fnDownloadAllAuctions.FullCommand(): func() error {
-			return command.FnDownloadAllAuctions(fn.DownloadAllAuctionsStateConfig{
+			return fnCommand.FnDownloadAllAuctions(fnState.DownloadAllAuctionsStateConfig{
 				ProjectId:     *projectID,
 				MessengerHost: *natsHost,
 				MessengerPort: *natsPort,
 			})
 		},
 		fnComputeAllLiveAuctions.FullCommand(): func() error {
-			return command.FnComputeAllLiveAuctions(fn.ComputeAllLiveAuctionsStateConfig{
+			return fnCommand.FnComputeAllLiveAuctions(fnState.ComputeAllLiveAuctionsStateConfig{
 				ProjectId: *projectID,
 			})
 		},
 		fnComputeAllPricelistHistories.FullCommand(): func() error {
-			return command.FnComputeAllPricelistHistories(fn.ComputeAllPricelistHistoriesStateConfig{
+			return fnCommand.FnComputeAllPricelistHistories(fnState.ComputeAllPricelistHistoriesStateConfig{
 				ProjectId: *projectID,
 			})
 		},
 		fnSyncAllItems.FullCommand(): func() error {
-			return command.FnSyncAllItems(fn.SyncAllItemsStateConfig{
+			return fnCommand.FnSyncAllItems(fnState.SyncAllItemsStateConfig{
 				ProjectId: *projectID,
 			})
 		},
 		fnCleanupAllExpiredManifests.FullCommand(): func() error {
-			return command.FnCleanupAllExpiredManifests(fn.CleanupAllExpiredManifestsStateConfig{
+			return fnCommand.FnCleanupAllExpiredManifests(fnState.CleanupAllExpiredManifestsStateConfig{
 				ProjectId: *projectID,
 			})
 		},
 		fnCleanupPricelistHistories.FullCommand(): func() error {
-			return command.FnCleanupPricelistHistories(fn.CleanupPricelistHistoriesStateConfig{
+			return fnCommand.FnCleanupPricelistHistories(fnState.CleanupPricelistHistoriesStateConfig{
 				ProjectId: *projectID,
 			})
 		},
