@@ -5,6 +5,8 @@ import (
 	"errors"
 	"time"
 
+	"github.com/sotah-inc/steamwheedle-cartel/pkg/act"
+
 	"github.com/sirupsen/logrus"
 	"github.com/sotah-inc/steamwheedle-cartel/pkg/blizzard"
 	"github.com/sotah-inc/steamwheedle-cartel/pkg/bus"
@@ -17,10 +19,7 @@ import (
 	"github.com/sotah-inc/steamwheedle-cartel/pkg/state/subjects"
 )
 
-func (sta DownloadAllAuctionsState) PublishToReceiveRealms(
-	regionRealmMap sotah.RegionRealmMap,
-	tuples bus.RegionRealmTimestampTuples,
-) error {
+func (sta DownloadAllAuctionsState) PublishToReceiveRealms(tuples bus.RegionRealmTimestampTuples) error {
 	// gathering a whitelist of region-realm-slugs
 	regionRealmSlugs := tuples.ToRegionRealmSlugs()
 
@@ -69,19 +68,25 @@ func (sta DownloadAllAuctionsState) Run() error {
 		return err
 	}
 
-	regionRealmMap := sotah.RegionRealmMap{}
+	regionRealms := sotah.RegionRealms{}
 	for _, region := range regions {
 		realms, err := sta.realmsBase.GetAllRealms(region.Name, sta.realmsBucket)
 		if err != nil {
 			return err
 		}
 
-		regionRealmMap[region.Name] = realms.ToRealmMap()
+		regionRealms[region.Name] = realms
 	}
+
+	actData, err := act.Get(sta.actEndpoints.DownloadAuctions, nil)
+	if err != nil {
+		return err
+	}
+	logging.WithField("act-data", actData).Info("Received from download-auctions act endpoint")
 
 	// producing messages
 	logging.Info("Producing messages for bulk requesting")
-	messages, err := bus.NewCollectAuctionMessages(regionRealmMap.ToRegionRealms())
+	messages, err := bus.NewCollectAuctionMessages(regionRealms)
 	if err != nil {
 		return err
 	}
@@ -133,7 +138,7 @@ func (sta DownloadAllAuctionsState) Run() error {
 
 	// publishing to receive-realms
 	logging.Info("Publishing realms to receive-realms")
-	if err := sta.PublishToReceiveRealms(regionRealmMap, tuples); err != nil {
+	if err := sta.PublishToReceiveRealms(tuples); err != nil {
 		return err
 	}
 
