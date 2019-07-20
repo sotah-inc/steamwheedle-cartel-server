@@ -51,7 +51,7 @@ github.com/nats-io/nkeys
 github.com/nats-io/nuid
 # github.com/sirupsen/logrus v1.4.2
 github.com/sirupsen/logrus
-# github.com/sotah-inc/steamwheedle-cartel v0.0.0-20190719151230-abe9789c935c
+# github.com/sotah-inc/steamwheedle-cartel v0.0.0-20190720230409-641a57bb1e08
 github.com/sotah-inc/steamwheedle-cartel/pkg/command/dev
 github.com/sotah-inc/steamwheedle-cartel/pkg/command/fn
 github.com/sotah-inc/steamwheedle-cartel/pkg/command/prod
@@ -66,6 +66,7 @@ github.com/sotah-inc/steamwheedle-cartel/pkg/state
 github.com/sotah-inc/steamwheedle-cartel/pkg/state/subjects
 github.com/sotah-inc/steamwheedle-cartel/pkg/metric
 github.com/sotah-inc/steamwheedle-cartel/pkg/blizzard
+github.com/sotah-inc/steamwheedle-cartel/pkg/sotah/codes
 github.com/sotah-inc/steamwheedle-cartel/pkg/sotah/sortdirections
 github.com/sotah-inc/steamwheedle-cartel/pkg/sotah/sortkinds
 github.com/sotah-inc/steamwheedle-cartel/pkg/util

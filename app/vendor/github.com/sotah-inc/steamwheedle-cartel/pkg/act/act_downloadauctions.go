@@ -12,7 +12,7 @@ type DownloadAuctionsInJob struct {
 
 type DownloadAuctionsOutJob struct {
 	sotah.RegionRealmTuple
-	Data []byte
+	Data ResponseMeta
 	Err  error
 }
 
@@ -36,7 +36,7 @@ func (c Client) DownloadAuctions(regionRealms sotah.RegionRealms) chan DownloadA
 			if err != nil {
 				out <- DownloadAuctionsOutJob{
 					RegionRealmTuple: inJob.RegionRealmTuple,
-					Data:             nil,
+					Data:             ResponseMeta{},
 					Err:              err,
 				}
 
@@ -47,7 +47,7 @@ func (c Client) DownloadAuctions(regionRealms sotah.RegionRealms) chan DownloadA
 			if err != nil {
 				out <- DownloadAuctionsOutJob{
 					RegionRealmTuple: inJob.RegionRealmTuple,
-					Data:             nil,
+					Data:             ResponseMeta{},
 					Err:              err,
 				}
 
@@ -56,7 +56,7 @@ func (c Client) DownloadAuctions(regionRealms sotah.RegionRealms) chan DownloadA
 
 			out <- DownloadAuctionsOutJob{
 				RegionRealmTuple: inJob.RegionRealmTuple,
-				Data:             actData.Body,
+				Data:             actData,
 				Err:              nil,
 			}
 		}
@@ -64,7 +64,7 @@ func (c Client) DownloadAuctions(regionRealms sotah.RegionRealms) chan DownloadA
 	postWork := func() {
 		close(out)
 	}
-	util.Work(32, worker, postWork)
+	util.Work(64, worker, postWork)
 
 	// queueing up the regions
 	go func() {
