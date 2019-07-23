@@ -51,7 +51,7 @@ github.com/nats-io/nkeys
 github.com/nats-io/nuid
 # github.com/sirupsen/logrus v1.4.2
 github.com/sirupsen/logrus
-# github.com/sotah-inc/steamwheedle-cartel v0.0.0-20190723152047-809d5d18ddd8
+# github.com/sotah-inc/steamwheedle-cartel v0.0.0-20190723152629-0e8d18a586a3
 github.com/sotah-inc/steamwheedle-cartel/pkg/command/dev
 github.com/sotah-inc/steamwheedle-cartel/pkg/command/fn
 github.com/sotah-inc/steamwheedle-cartel/pkg/command/prod
