@@ -170,7 +170,7 @@ func main() {
 		},
 		prodGateway.FullCommand(): func() error {
 			return prodCommand.Gateway(prodState.GatewayStateConfig{
-				GCloudProjectID: *projectID,
+				ProjectId: *projectID,
 			})
 		},
 		fnDownloadAllAuctions.FullCommand(): func() error {
