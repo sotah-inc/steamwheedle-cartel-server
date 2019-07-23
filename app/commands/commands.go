@@ -15,6 +15,7 @@ var (
 	ProdLiveAuctions       command = "prod-live-auctions"
 	ProdPricelistHistories command = "prod-pricelist-histories"
 	ProdItems              command = "prod-items"
+	ProdGateway            command = "prod-gateway"
 
 	FnDownloadAllAuctions          command = "fn-download-all-auctions"
 	FnComputeAllLiveAuctions       command = "fn-compute-all-live-auctions"

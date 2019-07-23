@@ -63,3 +63,8 @@ const (
 	Bullshit       Subject = "bullshit"
 	BullshitIntake Subject = "bullshitIntake"
 )
+
+// gcloud gateway subjects
+const (
+	CallDownloadAllAuctions Subject = "callDownloadAllAuctions"
+)

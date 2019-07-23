@@ -49,6 +49,7 @@ func main() {
 		prodLiveAuctionsCommand       = app.Command(string(commands.ProdLiveAuctions), "For managing live-auctions in gcp ce vm.")
 		prodPricelistHistoriesCommand = app.Command(string(commands.ProdPricelistHistories), "For managing pricelist-histories in gcp ce vm.")
 		prodItemsCommand              = app.Command(string(commands.ProdItems), "For managing items in gcp ce vm.")
+		prodGateway                   = app.Command(string(commands.ProdGateway), "For invoking the act gateway.")
 
 		fnDownloadAllAuctions          = app.Command(string(commands.FnDownloadAllAuctions), "For enqueueing downloading of auctions in gcp ce vm.")
 		fnComputeAllLiveAuctions       = app.Command(string(commands.FnComputeAllLiveAuctions), "For enqueueing computing of all live-auctions in gcp ce vm.")
@@ -165,6 +166,11 @@ func main() {
 				MessengerHost:    *natsHost,
 				GCloudProjectID:  *projectID,
 				ItemsDatabaseDir: fmt.Sprintf("%s/databases", *cacheDir),
+			})
+		},
+		prodGateway.FullCommand(): func() error {
+			return prodCommand.Gateway(prodState.GatewayStateConfig{
+				GCloudProjectID: *projectID,
 			})
 		},
 		fnDownloadAllAuctions.FullCommand(): func() error {
