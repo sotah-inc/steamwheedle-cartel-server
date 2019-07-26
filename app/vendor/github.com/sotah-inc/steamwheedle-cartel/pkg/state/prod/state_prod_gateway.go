@@ -46,6 +46,7 @@ func NewGatewayState(config GatewayStateConfig) (GatewayState, error) {
 	// establishing bus-listeners
 	sta.BusListeners = state.NewBusListeners(state.SubjectBusListeners{
 		subjects.CallDownloadAllAuctions: sta.ListenForCallDownloadAllAuctions,
+		subjects.CallCleanupAllManifests: sta.ListenForCallCleanupAllManifests,
 	})
 
 	return sta, nil
