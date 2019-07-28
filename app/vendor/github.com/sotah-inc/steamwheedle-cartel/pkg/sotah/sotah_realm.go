@@ -228,6 +228,79 @@ func (tuple RegionRealmTimestampTuple) EncodeForDelivery() (string, error) {
 	return string(jsonEncoded), nil
 }
 
+func NewRegionRealmTimestampSizeTuple(data string) (RegionRealmTimestampSizeTuple, error) {
+	var out RegionRealmTimestampSizeTuple
+	if err := json.Unmarshal([]byte(data), &out); err != nil {
+		return RegionRealmTimestampSizeTuple{}, err
+	}
+
+	return out, nil
+}
+
+type RegionRealmTimestampSizeTuple struct {
+	RegionRealmTimestampTuple
+	SizeBytes int `json:"size_bytes"`
+}
+
+func (tuple RegionRealmTimestampSizeTuple) EncodeForDelivery() (string, error) {
+	jsonEncoded, err := json.Marshal(tuple)
+	if err != nil {
+		return "", err
+	}
+
+	return string(jsonEncoded), nil
+}
+
+type RegionRealmSummaryTuples []RegionRealmSummaryTuple
+
+func (tuples RegionRealmSummaryTuples) ItemIds() blizzard.ItemIds {
+	itemIdsMap := ItemIdsMap{}
+	for _, tuple := range tuples {
+		for _, id := range tuple.ItemIds {
+			itemIdsMap[blizzard.ItemID(id)] = struct{}{}
+		}
+	}
+	out := blizzard.ItemIds{}
+	for id := range itemIdsMap {
+		out = append(out, id)
+	}
+
+	return out
+}
+
+func (tuples RegionRealmSummaryTuples) RegionRealmTuples() []RegionRealmTuple {
+	out := make([]RegionRealmTuple, len(tuples))
+	for i, tuple := range tuples {
+		out[i] = tuple.RegionRealmTuple
+	}
+
+	return out
+}
+
+func NewRegionRealmSummaryTuple(data string) (RegionRealmSummaryTuple, error) {
+	var out RegionRealmSummaryTuple
+	if err := json.Unmarshal([]byte(data), &out); err != nil {
+		return RegionRealmSummaryTuple{}, err
+	}
+
+	return out, nil
+}
+
+type RegionRealmSummaryTuple struct {
+	RegionRealmTimestampTuple
+	ItemIds    []int    `json:"item_ids"`
+	OwnerNames []string `json:"owner_names"`
+}
+
+func (tuple RegionRealmSummaryTuple) EncodeForDelivery() (string, error) {
+	jsonEncoded, err := json.Marshal(tuple)
+	if err != nil {
+		return "", err
+	}
+
+	return string(jsonEncoded), nil
+}
+
 func NewRegionRealmTimestampTuples(data string) (RegionRealmTimestampTuples, error) {
 	var out RegionRealmTimestampTuples
 	if err := json.Unmarshal([]byte(data), &out); err != nil {
