@@ -16,6 +16,7 @@ import (
 	fnState "github.com/sotah-inc/steamwheedle-cartel/pkg/state/fn"
 	prodState "github.com/sotah-inc/steamwheedle-cartel/pkg/state/prod"
 	"github.com/twinj/uuid"
+	kingpin "gopkg.in/alecthomas/kingpin.v2"
 )
 
 type commandMap map[string]func() error
