@@ -16,7 +16,7 @@ import (
 	fnState "github.com/sotah-inc/steamwheedle-cartel/pkg/state/fn"
 	prodState "github.com/sotah-inc/steamwheedle-cartel/pkg/state/prod"
 	"github.com/twinj/uuid"
-	kingpin "gopkg.in/alecthomas/kingpin.v2"
+	"gopkg.in/alecthomas/kingpin.v2"
 )
 
 type commandMap map[string]func() error
@@ -51,7 +51,6 @@ func main() {
 		prodItemsCommand              = app.Command(string(commands.ProdItems), "For managing items in gcp ce vm.")
 		prodGateway                   = app.Command(string(commands.ProdGateway), "For invoking the act gateway.")
 
-		fnComputeAllLiveAuctions       = app.Command(string(commands.FnComputeAllLiveAuctions), "For enqueueing computing of all live-auctions in gcp ce vm.")
 		fnComputeAllPricelistHistories = app.Command(string(commands.FnComputeAllPricelistHistories), "For enqueueing computing of all live-auctions in gcp ce vm.")
 		fnSyncAllItems                 = app.Command(string(commands.FnSyncAllItems), "For enqueueing syncing of items and item-icons in gcp ce vm.")
 		fnCleanupPricelistHistories    = app.Command(string(commands.FnCleanupPricelistHistories), "For gathering all expired pricelist-histories for deletion in gcp ce vm.")
@@ -168,11 +167,6 @@ func main() {
 		},
 		prodGateway.FullCommand(): func() error {
 			return prodCommand.Gateway(prodState.GatewayStateConfig{
-				ProjectId: *projectID,
-			})
-		},
-		fnComputeAllLiveAuctions.FullCommand(): func() error {
-			return fnCommand.FnComputeAllLiveAuctions(fnState.ComputeAllLiveAuctionsStateConfig{
 				ProjectId: *projectID,
 			})
 		},
