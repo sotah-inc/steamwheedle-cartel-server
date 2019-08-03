@@ -19,6 +19,5 @@ var (
 
 	FnComputeAllLiveAuctions       command = "fn-compute-all-live-auctions"
 	FnComputeAllPricelistHistories command = "fn-compute-all-pricelist-histories"
-	FnSyncAllItems                 command = "fn-sync-all-items"
 	FnCleanupPricelistHistories    command = "fn-cleanup-pricelist-histories"
 )

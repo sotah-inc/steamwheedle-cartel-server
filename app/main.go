@@ -52,7 +52,6 @@ func main() {
 		prodGateway                   = app.Command(string(commands.ProdGateway), "For invoking the act gateway.")
 
 		fnComputeAllPricelistHistories = app.Command(string(commands.FnComputeAllPricelistHistories), "For enqueueing computing of all live-auctions in gcp ce vm.")
-		fnSyncAllItems                 = app.Command(string(commands.FnSyncAllItems), "For enqueueing syncing of items and item-icons in gcp ce vm.")
 		fnCleanupPricelistHistories    = app.Command(string(commands.FnCleanupPricelistHistories), "For gathering all expired pricelist-histories for deletion in gcp ce vm.")
 	)
 	cmd := kingpin.MustParse(app.Parse(os.Args[1:]))
@@ -172,11 +171,6 @@ func main() {
 		},
 		fnComputeAllPricelistHistories.FullCommand(): func() error {
 			return fnCommand.FnComputeAllPricelistHistories(fnState.ComputeAllPricelistHistoriesStateConfig{
-				ProjectId: *projectID,
-			})
-		},
-		fnSyncAllItems.FullCommand(): func() error {
-			return fnCommand.FnSyncAllItems(fnState.SyncAllItemsStateConfig{
 				ProjectId: *projectID,
 			})
 		},
