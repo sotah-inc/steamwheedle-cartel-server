@@ -338,10 +338,13 @@ func (idBase ItemsDatabase) FilterInItemsToSync(ids blizzard.ItemIds) (ItemsSync
 			}
 
 			if item.Icon != "" {
+				correctIconObjectName := fmt.Sprintf("%s/%s.jpg", gameversions.Retail, item.Icon)
+				correctIconURL := fmt.Sprintf(store.ItemIconURLFormat, "sotah-item-icons", correctIconObjectName)
+
 				shouldInclude := item.IconURL == "" ||
 					item.IconObjectName == "" ||
-					item.IconObjectName != fmt.Sprintf("%s/%s.jpg", gameversions.Retail, item.Icon) ||
-					item.IconURL != fmt.Sprintf(store.ItemIconURLFormat, "sotah-item-icons", item.IconObjectName)
+					item.IconObjectName != correctIconObjectName ||
+					item.IconURL != correctIconURL
 				if shouldInclude {
 					iconItemIds := func() blizzard.ItemIds {
 						out, ok := iconsToSync[item.Icon]
