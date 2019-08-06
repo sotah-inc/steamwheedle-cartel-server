@@ -4,7 +4,7 @@ go 1.12
 
 require (
 	github.com/sirupsen/logrus v1.4.2
-	github.com/sotah-inc/steamwheedle-cartel v0.0.0-20190805004210-5ea3f7aaa517
+	github.com/sotah-inc/steamwheedle-cartel v0.0.0-20190806213338-07e3db972de9
 	github.com/twinj/uuid v1.0.0
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6
 )
