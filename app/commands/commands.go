@@ -17,7 +17,5 @@ var (
 	ProdItems              command = "prod-items"
 	ProdGateway            command = "prod-gateway"
 
-	FnComputeAllLiveAuctions       command = "fn-compute-all-live-auctions"
-	FnComputeAllPricelistHistories command = "fn-compute-all-pricelist-histories"
-	FnCleanupPricelistHistories    command = "fn-cleanup-pricelist-histories"
+	FnCleanupPricelistHistories command = "fn-cleanup-pricelist-histories"
 )
