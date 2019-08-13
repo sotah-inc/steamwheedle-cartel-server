@@ -53,7 +53,34 @@ func (s TopicNamesFirstSeen) NonZero() TopicNamesFirstSeen {
 	return out
 }
 
+func (s TopicNamesFirstSeen) After(limit time.Time) TopicNamesFirstSeen {
+	out := TopicNamesFirstSeen{}
+	for k, v := range s {
+		if time.Unix(int64(v), 0).After(limit) {
+			continue
+		}
+
+		out[k] = v
+	}
+
+	return out
+}
+
+func (s TopicNamesFirstSeen) Names() []string {
+	out := make([]string, len(s))
+	i := 0
+	for k := range s {
+		out[i] = k
+
+		i++
+	}
+
+	return out
+}
+
 func (b PubsubTopicsDatabase) Current(topicNames []string) (TopicNamesFirstSeen, error) {
+	out := NewTopicNamesFirstSeen(topicNames)
+
 	err := b.db.Batch(func(tx *bolt.Tx) error {
 		if _, err := tx.CreateBucketIfNotExists(databasePubsubTopicsBucketName()); err != nil {
 			return err
@@ -61,8 +88,6 @@ func (b PubsubTopicsDatabase) Current(topicNames []string) (TopicNamesFirstSeen,
 
 		return nil
 	})
-
-	out := NewTopicNamesFirstSeen(topicNames)
 
 	err = b.db.View(func(tx *bolt.Tx) error {
 		bkt := tx.Bucket(databasePubsubTopicsBucketName())
@@ -90,10 +115,10 @@ func (b PubsubTopicsDatabase) Current(topicNames []string) (TopicNamesFirstSeen,
 	return out, nil
 }
 
-func (b PubsubTopicsDatabase) Fill(topicNames []string, currentTime time.Time) error {
+func (b PubsubTopicsDatabase) Fill(topicNames []string, currentTime time.Time) (TopicNamesFirstSeen, error) {
 	currentSeen, err := b.Current(topicNames)
 	if err != nil {
-		return err
+		return TopicNamesFirstSeen{}, err
 	}
 
 	logging.WithFields(logrus.Fields{
@@ -101,14 +126,42 @@ func (b PubsubTopicsDatabase) Fill(topicNames []string, currentTime time.Time) e
 		"total-seen":   len(currentSeen),
 	}).Info("Topic-names provided")
 
+	for k, v := range currentSeen {
+		if v == 0 {
+			currentSeen[k] = sotah.UnixTimestamp(currentTime.Unix())
+		}
+	}
+
 	err = b.db.Batch(func(tx *bolt.Tx) error {
 		bkt, err := tx.CreateBucketIfNotExists(databasePubsubTopicsBucketName())
 		if err != nil {
 			return err
 		}
 
-		for topicName := range currentSeen {
-			if err := bkt.Put(pubsubTopicsKeyName(topicName), pubsubTopicsValueFromTimestamp(currentTime)); err != nil {
+		for k, v := range currentSeen {
+			if err := bkt.Put(pubsubTopicsKeyName(k), pubsubTopicsValueFromTimestamp(time.Unix(int64(v), 0))); err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
+	if err != nil {
+		return TopicNamesFirstSeen{}, err
+	}
+
+	return currentSeen, nil
+}
+
+func (b PubsubTopicsDatabase) Clean(topicNames []string) error {
+	err := b.db.Batch(func(tx *bolt.Tx) error {
+		bkt, err := tx.CreateBucketIfNotExists(databasePubsubTopicsBucketName())
+		if err != nil {
+			return err
+		}
+
+		for _, topicName := range topicNames {
+			if err := bkt.Delete(pubsubTopicsKeyName(topicName)); err != nil {
 				return err
 			}
 		}

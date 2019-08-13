@@ -3,6 +3,7 @@ package prod
 import (
 	"time"
 
+	"github.com/sirupsen/logrus"
 	"github.com/sotah-inc/steamwheedle-cartel/pkg/bus"
 	"github.com/sotah-inc/steamwheedle-cartel/pkg/logging"
 	"github.com/sotah-inc/steamwheedle-cartel/pkg/metric"
@@ -30,9 +31,19 @@ func (sta PubsubTopicsMonitorState) Sync() error {
 		logging.WithField("topic", topicName).Info("Found topic")
 	}
 
-	if err := sta.IO.Databases.PubsubTopicsDatabase.Fill(topicNames, time.Now()); err != nil {
+	currentSeen, err := sta.IO.Databases.PubsubTopicsDatabase.Fill(topicNames, time.Now())
+	if err != nil {
 		return err
 	}
+
+	retentionLimit := time.Now().Add(-1 * time.Hour * 24)
+
+	logging.WithFields(logrus.Fields{
+		"current-seen":    len(currentSeen.NonZero()),
+		"total-seen":      len(currentSeen),
+		"expired-seen":    len(currentSeen.After(retentionLimit)),
+		"retention-limit": retentionLimit.String(),
+	}).Info("Topic-names provided")
 
 	sta.IO.Reporter.Report(metric.Metrics{
 		"pubsub_topics_monitor_sync_duration": int(int64(time.Since(startTime)) / 1000 / 1000 / 1000),
