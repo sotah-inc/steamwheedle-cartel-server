@@ -51,7 +51,7 @@ github.com/nats-io/nkeys
 github.com/nats-io/nuid
 # github.com/sirupsen/logrus v1.4.2
 github.com/sirupsen/logrus
-# github.com/sotah-inc/steamwheedle-cartel v0.0.0-20190813140727-be8d8fb4c383
+# github.com/sotah-inc/steamwheedle-cartel v0.0.0-20190813143353-44cbb2b4a6a6
 github.com/sotah-inc/steamwheedle-cartel/pkg/command/dev
 github.com/sotah-inc/steamwheedle-cartel/pkg/command/prod
 github.com/sotah-inc/steamwheedle-cartel/pkg/logging
@@ -136,9 +136,9 @@ golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
 golang.org/x/text/transform
 # google.golang.org/api v0.1.0
-google.golang.org/api/iterator
 google.golang.org/api/option
 google.golang.org/api/support/bundler
+google.golang.org/api/iterator
 google.golang.org/api/googleapi
 google.golang.org/api/storage/v1
 google.golang.org/api/transport/http
