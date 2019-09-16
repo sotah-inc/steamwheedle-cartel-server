@@ -45,7 +45,7 @@ func (c Client) ComputePricelistHistories(
 				continue
 			}
 
-			actData, err := c.Call("/", "POST", []byte(body))
+			actData, err := c.Call("/compute-pricelist-histories", "POST", []byte(body))
 			if err != nil {
 				out <- ComputePricelistHistoriesOutJob{
 					RegionRealmTuple: inJob.RegionRealmTuple,
@@ -66,7 +66,7 @@ func (c Client) ComputePricelistHistories(
 	postWork := func() {
 		close(out)
 	}
-	util.Work(16, worker, postWork)
+	util.Work(4, worker, postWork)
 
 	// queueing up the regions
 	go func() {

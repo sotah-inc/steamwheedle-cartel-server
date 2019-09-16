@@ -43,7 +43,7 @@ func (c Client) ComputeLiveAuctions(tuples sotah.RegionRealmTimestampTuples) cha
 				continue
 			}
 
-			actData, err := c.Call("/", "POST", []byte(body))
+			actData, err := c.Call("/compute-live-auctions", "POST", []byte(body))
 			if err != nil {
 				out <- ComputeLiveAuctionsOutJob{
 					RegionRealmTuple: inJob.RegionRealmTuple,
@@ -64,7 +64,7 @@ func (c Client) ComputeLiveAuctions(tuples sotah.RegionRealmTimestampTuples) cha
 	postWork := func() {
 		close(out)
 	}
-	util.Work(8, worker, postWork)
+	util.Work(4, worker, postWork)
 
 	// queueing up the regions
 	go func() {

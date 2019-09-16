@@ -43,7 +43,7 @@ func (c Client) DownloadAuctions(regionRealms sotah.RegionRealms) chan DownloadA
 				continue
 			}
 
-			actData, err := c.Call("/", "POST", []byte(body))
+			actData, err := c.Call("/download-auctions", "POST", []byte(body))
 			if err != nil {
 				out <- DownloadAuctionsOutJob{
 					RegionRealmTuple: inJob.RegionRealmTuple,
@@ -64,7 +64,7 @@ func (c Client) DownloadAuctions(regionRealms sotah.RegionRealms) chan DownloadA
 	postWork := func() {
 		close(out)
 	}
-	util.Work(8, worker, postWork)
+	util.Work(12, worker, postWork)
 
 	// queueing up the regions
 	go func() {
