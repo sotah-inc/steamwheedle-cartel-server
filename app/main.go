@@ -1,7 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"os"
 
 	"github.com/sirupsen/logrus"
@@ -13,8 +15,10 @@ import (
 	"github.com/sotah-inc/steamwheedle-cartel/pkg/sotah"
 	devState "github.com/sotah-inc/steamwheedle-cartel/pkg/state/dev"
 	prodState "github.com/sotah-inc/steamwheedle-cartel/pkg/state/prod"
+	"github.com/sotah-inc/steamwheedle-cartel/pkg/store"
+	"github.com/sotah-inc/steamwheedle-cartel/pkg/store/regions"
 	"github.com/twinj/uuid"
-	"gopkg.in/alecthomas/kingpin.v2"
+	kingpin "gopkg.in/alecthomas/kingpin.v2"
 )
 
 type commandMap map[string]func() error
@@ -28,15 +32,14 @@ func main() {
 
 	// parsing the command flags
 	var (
-		app            = kingpin.New("sotah-server", "A command-line Blizzard AH client.")
-		natsHost       = app.Flag("nats-host", "NATS hostname").Default("localhost").Envar("NATS_HOST").Short('h').String()
-		natsPort       = app.Flag("nats-port", "NATS port").Default("4222").Envar("NATS_PORT").Short('p').Int()
-		configFilepath = app.Flag("config", "Relative path to config json").Required().Short('c').String()
-		clientID       = app.Flag("client-id", "Blizzard API Client ID").Envar("CLIENT_ID").String()
-		clientSecret   = app.Flag("client-secret", "Blizzard API Client Secret").Envar("CLIENT_SECRET").String()
-		verbosity      = app.Flag("verbosity", "Log verbosity").Default("info").Short('v').String()
-		cacheDir       = app.Flag("cache-dir", "Directory to cache data files to").Required().String()
-		projectID      = app.Flag("project-id", "GCloud Storage Project ID").Default("").Envar("PROJECT_ID").String()
+		app          = kingpin.New("sotah-server", "A command-line Blizzard AH client.")
+		natsHost     = app.Flag("nats-host", "NATS hostname").Default("localhost").Envar("NATS_HOST").Short('h').String()
+		natsPort     = app.Flag("nats-port", "NATS port").Default("4222").Envar("NATS_PORT").Short('p').Int()
+		clientID     = app.Flag("client-id", "Blizzard API Client ID").Envar("CLIENT_ID").String()
+		clientSecret = app.Flag("client-secret", "Blizzard API Client Secret").Envar("CLIENT_SECRET").String()
+		verbosity    = app.Flag("verbosity", "Log verbosity").Default("info").Short('v').String()
+		cacheDir     = app.Flag("cache-dir", "Directory to cache data files to").Required().String()
+		projectID    = app.Flag("project-id", "GCloud Storage Project ID").Default("").Envar("PROJECT_ID").String()
 
 		apiCommand                = app.Command(string(commands.API), "For running sotah-server.")
 		liveAuctionsCommand       = app.Command(string(commands.LiveAuctions), "For in-memory storage of current auctions.")
@@ -61,13 +64,39 @@ func main() {
 	}
 	logging.SetLevel(logVerbosity)
 
-	// loading the config file
-	c, err := sotah.NewConfigFromFilepath(*configFilepath)
+	// gathering the config file from a store
+	c, err := func() (sotah.Config, error) {
+		storeClient, err := store.NewClient(*projectID)
+		if err != nil {
+			return sotah.Config{}, err
+		}
+
+		bootBase := store.NewBootBase(storeClient, regions.USCentral1)
+		bootBucket, err := bootBase.GetFirmBucket()
+		configObj, err := bootBase.GetFirmObject("config.json", bootBucket)
+		if err != nil {
+			return sotah.Config{}, err
+		}
+
+		reader, err := configObj.NewReader(storeClient.Context)
+		if err != nil {
+			return sotah.Config{}, err
+		}
+
+		data, err := ioutil.ReadAll(reader)
+		if err != nil {
+			return sotah.Config{}, err
+		}
+
+		var out sotah.Config
+		if err := json.Unmarshal(data, &out); err != nil {
+			return sotah.Config{}, err
+		}
+
+		return out, nil
+	}()
 	if err != nil {
-		logging.WithFields(logrus.Fields{
-			"error":    err.Error(),
-			"filepath": *configFilepath,
-		}).Fatal("Could not fetch config")
+		logging.WithField("error", err.Error()).Fatal("Could not gather config from store")
 
 		return
 	}

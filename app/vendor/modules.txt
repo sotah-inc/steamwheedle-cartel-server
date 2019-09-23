@@ -51,7 +51,7 @@ github.com/nats-io/nkeys
 github.com/nats-io/nuid
 # github.com/sirupsen/logrus v1.4.2
 github.com/sirupsen/logrus
-# github.com/sotah-inc/steamwheedle-cartel v0.0.0-20190921020339-c7d69150e41c
+# github.com/sotah-inc/steamwheedle-cartel v0.0.0-20190923202344-66a3cbe81df7
 github.com/sotah-inc/steamwheedle-cartel/pkg/command/dev
 github.com/sotah-inc/steamwheedle-cartel/pkg/command/prod
 github.com/sotah-inc/steamwheedle-cartel/pkg/logging
@@ -59,6 +59,8 @@ github.com/sotah-inc/steamwheedle-cartel/pkg/logging/stackdriver
 github.com/sotah-inc/steamwheedle-cartel/pkg/sotah
 github.com/sotah-inc/steamwheedle-cartel/pkg/state/dev
 github.com/sotah-inc/steamwheedle-cartel/pkg/state/prod
+github.com/sotah-inc/steamwheedle-cartel/pkg/store
+github.com/sotah-inc/steamwheedle-cartel/pkg/store/regions
 github.com/sotah-inc/steamwheedle-cartel/pkg/database
 github.com/sotah-inc/steamwheedle-cartel/pkg/state
 github.com/sotah-inc/steamwheedle-cartel/pkg/state/subjects
@@ -75,12 +77,10 @@ github.com/sotah-inc/steamwheedle-cartel/pkg/messenger
 github.com/sotah-inc/steamwheedle-cartel/pkg/messenger/codes
 github.com/sotah-inc/steamwheedle-cartel/pkg/metric/kinds
 github.com/sotah-inc/steamwheedle-cartel/pkg/resolver
-github.com/sotah-inc/steamwheedle-cartel/pkg/store
 github.com/sotah-inc/steamwheedle-cartel/pkg/act
 github.com/sotah-inc/steamwheedle-cartel/pkg/bus/codes
 github.com/sotah-inc/steamwheedle-cartel/pkg/hell
 github.com/sotah-inc/steamwheedle-cartel/pkg/sotah/gameversions
-github.com/sotah-inc/steamwheedle-cartel/pkg/store/regions
 github.com/sotah-inc/steamwheedle-cartel/pkg/blizzard/characterclass
 github.com/sotah-inc/steamwheedle-cartel/pkg/blizzard/characterfaction
 github.com/sotah-inc/steamwheedle-cartel/pkg/blizzard/charactergender
@@ -136,9 +136,9 @@ golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
 golang.org/x/text/transform
 # google.golang.org/api v0.1.0
+google.golang.org/api/iterator
 google.golang.org/api/option
 google.golang.org/api/support/bundler
-google.golang.org/api/iterator
 google.golang.org/api/googleapi
 google.golang.org/api/storage/v1
 google.golang.org/api/transport/http
