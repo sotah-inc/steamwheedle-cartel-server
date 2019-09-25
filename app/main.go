@@ -182,7 +182,7 @@ func main() {
 			})
 		},
 		prodItemsCommand.FullCommand(): func() error {
-			return prodCommand.ProdItems(prodState.ProdItemsStateConfig{
+			return prodCommand.Items(prodState.ItemsStateConfig{
 				MessengerPort:    *natsPort,
 				MessengerHost:    *natsHost,
 				GCloudProjectID:  *projectID,
