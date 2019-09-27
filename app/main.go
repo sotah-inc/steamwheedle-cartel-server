@@ -32,14 +32,16 @@ func main() {
 
 	// parsing the command flags
 	var (
-		app          = kingpin.New("sotah-server", "A command-line Blizzard AH client.")
-		natsHost     = app.Flag("nats-host", "NATS hostname").Default("localhost").Envar("NATS_HOST").Short('h').String()
-		natsPort     = app.Flag("nats-port", "NATS port").Default("4222").Envar("NATS_PORT").Short('p').Int()
-		clientID     = app.Flag("client-id", "Blizzard API Client ID").Envar("CLIENT_ID").String()
-		clientSecret = app.Flag("client-secret", "Blizzard API Client Secret").Envar("CLIENT_SECRET").String()
-		verbosity    = app.Flag("verbosity", "Log verbosity").Default("info").Short('v').String()
-		cacheDir     = app.Flag("cache-dir", "Directory to cache data files to").Required().String()
-		projectID    = app.Flag("project-id", "GCloud Storage Project ID").Default("").Envar("PROJECT_ID").String()
+		app            = kingpin.New("sotah-server", "A command-line Blizzard AH client.")
+		natsHost       = app.Flag("nats-host", "NATS hostname").Default("localhost").Envar("NATS_HOST").Short('h').String()
+		natsPort       = app.Flag("nats-port", "NATS port").Default("4222").Envar("NATS_PORT").Short('p').Int()
+		clientID       = app.Flag("client-id", "Blizzard API Client ID").Envar("CLIENT_ID").String()
+		clientSecret   = app.Flag("client-secret", "Blizzard API Client Secret").Envar("CLIENT_SECRET").String()
+		verbosity      = app.Flag("verbosity", "Log verbosity").Default("info").Short('v').String()
+		cacheDir       = app.Flag("cache-dir", "Directory to cache data files to").Required().String()
+		projectID      = app.Flag("project-id", "GCloud Storage Project ID").Default("").Envar("PROJECT_ID").String()
+		isLocal        = app.Flag("is-local", "Flag to use local config filepath or not").Bool()
+		configFilepath = app.Flag("config-filepath", "Optional config filepath").Short('c').String()
 
 		apiCommand                = app.Command(string(commands.API), "For running sotah-server.")
 		liveAuctionsCommand       = app.Command(string(commands.LiveAuctions), "For in-memory storage of current auctions.")
@@ -66,6 +68,10 @@ func main() {
 
 	// gathering the config file from a store
 	c, err := func() (sotah.Config, error) {
+		if *isLocal {
+			return sotah.NewConfigFromFilepath(*configFilepath)
+		}
+
 		storeClient, err := store.NewClient(*projectID)
 		if err != nil {
 			return sotah.Config{}, err
