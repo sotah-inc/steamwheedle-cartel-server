@@ -62,7 +62,11 @@ func (r Resolver) GetItems(primaryRegion sotah.Region, IDs []blizzard.ItemID) ch
 
 	// queueing up the items
 	go func() {
-		for _, ID := range IDs {
+		for i, ID := range IDs {
+			if i > 50 {
+				break
+			}
+
 			in <- ID
 		}
 
