@@ -153,7 +153,7 @@ func main() {
 				DiskStoreCacheDir:             *cacheDir,
 				MessengerPort:                 *natsPort,
 				MessengerHost:                 *natsHost,
-				PricelistHistoriesDatabaseDir: fmt.Sprintf("%s/databases/pricelist-histories", *cacheDir),
+				PricelistHistoriesDatabaseDir: fmt.Sprintf("%s/databases", *cacheDir),
 			})
 		},
 		prodApiCommand.FullCommand(): func() error {
